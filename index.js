@@ -36,7 +36,7 @@ io.on("connection", (socket) => {
   socket.on("sendNotification", ({ senderId, receiverId, type, ride }) => {
     console.log('sendNotification', senderId, type);
     const receiver = getUser(receiverId);
-    if(receiver) {
+    if (receiver) {
       io.to(receiver.socketId).emit("getNotification", {
         senderId,
         type,
@@ -45,12 +45,16 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("sendText", ({ senderId, receiverId, text }) => {
-    const receiver = getUser(receiverId);
-    io.to(receiver.socketId).emit("getText", {
-      senderId,
-      text,
-    });
+  socket.on("sendMessage", (data) => {
+    const { recipientId, content } = data;
+    console.log('sendMessage', data);
+    const receiver = getUser(recipientId);
+    // console.log(receiver);
+    
+    if(receiver) {
+      io.to(receiver.socketId).emit("getMessage", data);
+    }
+
   });
 
   socket.on("disconnect", () => {
